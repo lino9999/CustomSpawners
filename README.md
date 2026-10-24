@@ -15,10 +15,10 @@ Designed for survival, Skyblock, factions and economy servers, CustomSpawners us
 - **Spawner stacking:** combine matching spawners or create Omni spawners containing multiple types and tiers.
 - **Tier progression:** configure ordered tiers and buy additional stack units or tier upgrades with money or experience levels.
 - **Four generator modes:** spawn entities, drop items, place blocks or execute console commands. A tier can combine all four.
-- **Spawner shop:** paginated menus, configurable prices and sorting, and purchases of 1, 10 or 64 items.
+- **Mob spawner shop:** paginated menus, configurable prices and sorting, and purchases of 1, 10 or 64 typed spawners. Armor Stands and item, block or command generators are excluded, including old catalog entries.
 - **Timed boosts:** buy extra output for a placed spawner or grant owner boosts, including permanent boosts. Active bonuses add together; expired bonuses produce nothing.
 - **Spawner conversion:** exchange types using money or spawn eggs, with an optional return of the previous mob egg.
-- **Silk Touch collection:** configurable tool requirements, natural/placed drop chances, whole-stack pickup and direct inventory delivery.
+- **Pickaxe collection:** ordinary diamond/netherite pickaxes work by default; Silk Touch pickaxes remain supported. Invalid tools preserve the block. Placed spawners return to inventory, with safe overflow drops.
 - **Custom loot:** item quantities, probability, names, lore, command rewards, experience and looting bonuses for generated mobs.
 - **Mob kill rewards:** configurable guaranteed milestones, random spawner rewards, progress alerts and kill statistics.
 - **Spawn conditions:** biome, height, light, nearby players, entity caps, storm requirements and permitted ground materials. Bounded arithmetic expressions customize output amounts without a script engine.
@@ -41,10 +41,26 @@ The compatibility target is **Paper 1.21.11 through 26.3**. Automated builds com
 ## Installation
 
 1. Download the ready-to-use JAR from [GitHub Releases](https://github.com/lino9999/CustomSpawners/releases/latest). To build from source, use `./mvnw verify` or `mvnw.cmd verify` with JDK 21 or newer.
-2. Copy `CustomSpawners-1.0.0.jar` into the server's `plugins` folder and restart.
+2. Copy `CustomSpawners-1.0.1.jar` into the server's `plugins` folder and restart.
 3. Optionally install Vault with an economy provider, or PlayerPoints. WorldGuard and GriefPrevention are supported protection hooks.
 4. Configure `plugins/CustomSpawners/config.yml`, `spawners.yml` and `messages.yml`.
 5. Run `/csp reload`. Invalid settings or definitions are rejected and the previously loaded configuration remains active.
+
+### WildStacker
+
+CustomSpawners manages spawner blocks, tiers, placement and collection. WildStacker may manage spawned mobs and dropped items. Before starting both plugins, set these existing options in `plugins/WildStacker/config.yml`, then restart:
+
+```yaml
+spawners:
+  enabled: false
+  spawners-override:
+    enabled: false
+  listen-paper-pre-spawn-event: false
+```
+
+Keep WildStacker's `entities.enabled` and `items.enabled` enabled as needed. Generated mobs are handed to WildStacker's public stacking API; different CustomSpawners types/tiers cannot merge. CustomSpawners checks these settings at startup and refuses to activate if spawner ownership conflicts, preserving its saved state. Use a WildStacker build that supports your Minecraft version: the local 2025.2-b178 build works on 1.21.11 but cannot initialize on 26.3; WildStacker 2026.3 works on 26.3. Existing WildStacker spawner stacks are not imported; recover or migrate them with WildStacker before switching spawner ownership. See [verification details and limits](docs/COMPATIBILITY.md).
+
+Existing spawners are preserved during upgrades. Old Armor Stand definitions are hidden from the shop; an administrator can aim at an old placed spawner and use `/csp change pig` or another mob ID to convert it. New diamond pickup and placed-inventory defaults apply to older CustomSpawners configurations without resetting them. Set `pickup.diamond-pickaxe: false` to require the existing Silk Touch path; set `pickup.placed-to-inventory: false` to let `pickup.to-inventory` alone select the delivery destination.
 
 The first start generates mob definitions from the server's available entity types. New mobs on newer supported servers receive definitions without a hardcoded entity list. Example item, block and command generators are disabled until you enable them.
 
@@ -88,7 +104,7 @@ Examples:
 
 ## Player controls and permissions
 
-Right-click a spawner with a tagged spawner item to combine it. Right-click with a spawn egg to convert it; otherwise the management menu opens. Mine it with a Silk Touch pickaxe to collect it. Sneaking while collecting preserves the whole mixed stack when enabled.
+Right-click a spawner with a tagged spawner item to combine it. Right-click with a spawn egg to convert it; otherwise the management menu opens. Mine it with a diamond/netherite pickaxe or an allowed Silk Touch pickaxe to collect it. Sneaking while collecting preserves the whole mixed stack when enabled.
 
 Regular players receive `customspawners.use`, `.place`, `.break`, `.stack`, `.omni`, `.shop`, `.stats`, `.upgrade`, `.convert`, `.boost`, `.rewards`, `.silk` and `.craft` by default. Each name uses the `customspawners` prefix. Set these nodes to false to restrict a feature.
 
@@ -145,6 +161,6 @@ The source separates models, configuration, persistence, spawning, services, hoo
 
 ## SpigotMC publishing assets
 
-Ready-to-paste English [resource description](docs/spigotmc/description.bbcode.txt) and [full documentation](docs/spigotmc/documentation.bbcode.txt) are supplied in BBCode, alongside [pixel-art icon exports](assets/spigotmc). See the [publishing notes](docs/spigotmc/README.md). These files are also attached to the 1.0.0 release.
+Ready-to-paste English [resource description](docs/spigotmc/description.bbcode.txt) and [full documentation](docs/spigotmc/documentation.bbcode.txt) are supplied in BBCode, alongside [pixel-art icon exports](assets/spigotmc). See the [publishing notes](docs/spigotmc/README.md). These files are also attached to the 1.0.1 release.
 
 Created and maintained by **Lino**. Licensed under [MIT](LICENSE).

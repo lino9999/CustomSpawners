@@ -120,11 +120,23 @@ public final class SpawnerService {
         if (current != null) return current;
         if (block.getType() != Material.SPAWNER || blocked(block.getWorld().getName(), null))
             return null;
-        EntityType entity = ((CreatureSpawner) block.getState()).getSpawnedType();
+        CreatureSpawner tile = (CreatureSpawner) block.getState();
+        Map<StackKey, Integer> saved;
+        java.util.UUID owner;
+        try {
+            saved = items.read(tile);
+            owner = items.owner(tile);
+        } catch (IllegalArgumentException ex) {
+            plugin.getLogger()
+                    .warning("Invalid spawner block data at " + position + ": " + ex.getMessage());
+            return null;
+        }
+        EntityType entity = tile.getSpawnedType();
         SpawnerType type = entity == null ? null : catalog.get(entity.name());
-        if (type == null || !type.enabled()) return null;
-        PlacedSpawner spawner = new PlacedSpawner(position, null);
-        spawner.add(new StackKey(type.id(), type.firstTier().id()), 1);
+        if (saved.isEmpty() && (type == null || !type.enabled())) return null;
+        PlacedSpawner spawner = new PlacedSpawner(position, owner);
+        if (saved.isEmpty()) spawner.add(new StackKey(type.id(), type.firstTier().id()), 1);
+        else saved.forEach(spawner::add);
         repository.put(spawner);
         engine.activate(spawner);
         engine.refresh(spawner);
@@ -289,8 +301,13 @@ public final class SpawnerService {
             if (!typePermission(player, "break", key.type()) || catalog.tier(key) == null)
                 return fail(player, "no-permission");
         int amount = removed.values().stream().mapToInt(Integer::intValue).sum();
-        boolean silk =
+        boolean eligibleTool =
                 player.hasPermission("customspawners.bypass.silk")
+                        || settings.bool("pickup.diamond-pickaxe")
+                                && (player.getInventory().getItemInMainHand().getType()
+                                                == Material.DIAMOND_PICKAXE
+                                        || player.getInventory().getItemInMainHand().getType()
+                                                == Material.NETHERITE_PICKAXE)
                         || settings.bool("pickup.silk-touch")
                                 && player.hasPermission("customspawners.silk")
                                 && player.getInventory()
@@ -305,8 +322,9 @@ public final class SpawnerService {
                                 && removed.keySet().stream()
                                         .allMatch(
                                                 key -> typePermission(player, "silk", key.type()));
+        if (!eligibleTool) return fail(player, "pickup-tool-required");
         boolean drop =
-                silk
+                eligibleTool
                         && (!settings.bool("pickup.only-placed") || spawner.owner() != null)
                         && chance(
                                 settings.decimal(
@@ -328,7 +346,9 @@ public final class SpawnerService {
         if (spawner.total() == 0) remove(spawner);
         else changed(spawner);
         if (item != null) {
-            if (settings.bool("pickup.to-inventory")) SpawnerItems.giveOrDrop(player, item);
+            if (settings.bool("pickup.to-inventory")
+                    || spawner.owner() != null && settings.bool("pickup.placed-to-inventory"))
+                SpawnerItems.giveOrDrop(player, item);
             else
                 player.getWorld()
                         .dropItemNaturally(spawner.position().location().add(.5, .5, .5), item);
@@ -449,9 +469,7 @@ public final class SpawnerService {
     public boolean buy(Player player, String id, String tierId, int amount) {
         if (!permission(player, "shop")) return false;
         var type = catalog.get(id);
-        if (type == null
-                || !type.enabled()
-                || !type.shop()
+        if (!catalog.availableInShop(type)
                 || !type.firstTier().id().equals(tierId)
                 || amount < 1
                 || amount > 64

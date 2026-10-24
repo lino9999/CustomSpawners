@@ -18,12 +18,14 @@ limits:
   per-chunk: -1
   per-player: -1
 pickup:
+  diamond-pickaxe: true
+  placed-to-inventory: true
   silk-touch: true
   silk-level: 1
   only-placed: false
   sneak-whole-stack: true
   always-whole-stack: false
-  to-inventory: false
+  to-inventory: true
   natural-chance: 100.0
   placed-chance: 100.0
   prevent-explosions: false

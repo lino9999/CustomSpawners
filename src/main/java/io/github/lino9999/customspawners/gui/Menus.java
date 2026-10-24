@@ -36,7 +36,7 @@ public final class Menus implements Listener {
         if (!plugin.service().permission(player, "shop")) return;
         List<SpawnerType> types =
                 plugin.catalog().all().stream()
-                        .filter(type -> type.enabled() && type.shop())
+                        .filter(plugin.catalog()::availableInShop)
                         .filter(
                                 type ->
                                         !plugin.service()
@@ -58,7 +58,8 @@ public final class Menus implements Listener {
                     SpawnerType type = entry.value();
                     menu.button(
                             entry.slot(),
-                            icon(type),
+                            plugin.items()
+                                    .create(new StackKey(type.id(), type.firstTier().id()), 1),
                             "&6" + type.name(),
                             List.of(
                                     "&7Price: &e" + type.price(),

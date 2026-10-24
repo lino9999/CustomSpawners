@@ -123,6 +123,29 @@ public final class SpawnerCatalog {
         return types.values();
     }
 
+    public boolean availableInShop(SpawnerType type) {
+        return type != null
+                && type.enabled()
+                && type.shop()
+                && type.tiers().values().stream().allMatch(SpawnerCatalog::mobTier);
+    }
+
+    private static boolean mobTier(SpawnerTier tier) {
+        return !tier.outputs().isEmpty()
+                && tier.outputs().stream().allMatch(SpawnerCatalog::mobOutput);
+    }
+
+    private static boolean mobOutput(SpawnOutput output) {
+        return output.kind() == SpawnOutput.Kind.ENTITY
+                && isMob(EntityType.valueOf(output.value()));
+    }
+
+    private static boolean isMob(EntityType entity) {
+        return entity.isSpawnable()
+                && entity.getEntityClass() != null
+                && org.bukkit.entity.Mob.class.isAssignableFrom(entity.getEntityClass());
+    }
+
     public SpawnerType get(String id) {
         return id == null ? null : types.get(normalize(id));
     }
@@ -454,7 +477,7 @@ public final class SpawnerCatalog {
         if (entries != null) for (String id : entries.getKeys(false)) existing.add(normalize(id));
         boolean changed = false;
         for (EntityType entity : EntityType.values()) {
-            if (!entity.isAlive() || !entity.isSpawnable()) continue;
+            if (!isMob(entity)) continue;
             String id = entity.name().toLowerCase(Locale.ROOT);
             if (existing.contains(id)) continue;
             String at = "spawners." + id;
@@ -511,7 +534,7 @@ public final class SpawnerCatalog {
             throw invalid(
                     path,
                     "Commands must contain a command label without a leading slash or control"
-                        + " characters");
+                            + " characters");
         }
         return command;
     }

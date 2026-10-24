@@ -2,13 +2,17 @@ package io.github.lino9999.customspawners.service;
 
 import io.github.lino9999.customspawners.config.Messages;
 import io.github.lino9999.customspawners.config.SpawnerCatalog;
+import io.github.lino9999.customspawners.model.PlacedSpawner;
+import io.github.lino9999.customspawners.model.SpawnOutput;
 import io.github.lino9999.customspawners.model.StackKey;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,13 +20,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public final class SpawnerItems {
     private final NamespacedKey dataKey;
+    private final NamespacedKey ownerKey;
     private final SpawnerCatalog catalog;
 
     public SpawnerItems(JavaPlugin plugin, SpawnerCatalog catalog) {
         dataKey = new NamespacedKey(plugin, "stacks");
+        ownerKey = new NamespacedKey(plugin, "placed-by");
         this.catalog = catalog;
     }
 
@@ -43,6 +50,24 @@ public final class SpawnerItems {
                 item.getItemMeta()
                         .getPersistentDataContainer()
                         .get(dataKey, PersistentDataType.STRING);
+        return decode(data);
+    }
+
+    public boolean tagged(CreatureSpawner tile) {
+        return tile.getPersistentDataContainer().has(dataKey);
+    }
+
+    public Map<StackKey, Integer> read(CreatureSpawner tile) {
+        if (!tagged(tile)) return Map.of();
+        return decode(tile.getPersistentDataContainer().get(dataKey, PersistentDataType.STRING));
+    }
+
+    public UUID owner(CreatureSpawner tile) {
+        String owner = tile.getPersistentDataContainer().get(ownerKey, PersistentDataType.STRING);
+        return owner == null ? null : UUID.fromString(owner);
+    }
+
+    private Map<StackKey, Integer> decode(String data) {
         if (data == null || data.length() > 32768)
             throw new IllegalArgumentException("Invalid spawner item data.");
         Map<StackKey, Integer> stacks = new LinkedHashMap<>();
@@ -110,16 +135,53 @@ public final class SpawnerItems {
                                     + entry.getValue()));
         }
         ItemStack item = new ItemStack(Material.SPAWNER);
-        ItemMeta meta = item.getItemMeta();
+        BlockStateMeta meta = (BlockStateMeta) item.getItemMeta();
         String name =
                 stacks.size() == 1
                         ? catalog.get(stacks.keySet().iterator().next().type()).name()
                         : "Omni";
-        meta.setDisplayName(Messages.color("&6" + name + " Spawner &7[&e" + total + "x&7]"));
+        if (!name.toLowerCase(java.util.Locale.ROOT).endsWith("spawner")) name += " Spawner";
+        meta.setDisplayName(Messages.color("&6" + name + " &7[&e" + total + "x&7]"));
         meta.setLore(lore);
         meta.getPersistentDataContainer().set(dataKey, PersistentDataType.STRING, data.toString());
+        CreatureSpawner tile = (CreatureSpawner) meta.getBlockState();
+        apply(tile, stacks, data.toString());
+        meta.setBlockState(tile);
         item.setItemMeta(meta);
         return item;
+    }
+
+    public void apply(CreatureSpawner tile, PlacedSpawner spawner) {
+        String data =
+                spawner.stacks().entrySet().stream()
+                        .map(
+                                entry ->
+                                        entry.getKey().type()
+                                                + ":"
+                                                + entry.getKey().tier()
+                                                + ":"
+                                                + entry.getValue())
+                        .collect(java.util.stream.Collectors.joining(";"));
+        apply(tile, spawner.stacks(), data);
+        if (spawner.owner() == null) tile.getPersistentDataContainer().remove(ownerKey);
+        else
+            tile.getPersistentDataContainer()
+                    .set(ownerKey, PersistentDataType.STRING, spawner.owner().toString());
+    }
+
+    private void apply(CreatureSpawner tile, Map<StackKey, Integer> stacks, String data) {
+        var tier = catalog.tier(stacks.keySet().iterator().next());
+        EntityType entity =
+                tier == null
+                        ? null
+                        : tier.outputs().stream()
+                                .filter(output -> output.kind() == SpawnOutput.Kind.ENTITY)
+                                .map(output -> EntityType.valueOf(output.value()))
+                                .findFirst()
+                                .orElse(null);
+        tile.setPotentialSpawns(List.of());
+        tile.setSpawnedType(entity);
+        tile.getPersistentDataContainer().set(dataKey, PersistentDataType.STRING, data);
     }
 
     public static boolean hasSpace(Player player, ItemStack item, int count) {

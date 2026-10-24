@@ -5,7 +5,7 @@ api-version: '1.21.11'
 author: Lino
 description: Configurable spawner stacking, tiers, generators, custom loot and economy.
 website: https://github.com/lino9999/CustomSpawners
-softdepend: [Vault, PlayerPoints, WorldGuard, GriefPrevention, PlaceholderAPI]
+softdepend: [Vault, PlayerPoints, WorldGuard, GriefPrevention, PlaceholderAPI, WildStacker]
 commands:
   customspawners:
     description: Manage CustomSpawners and open spawner menus.

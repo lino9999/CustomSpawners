@@ -1,9 +1,12 @@
 package io.github.lino9999.customspawners.spawn;
 
+import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent;
+
 import io.github.lino9999.customspawners.api.SpawnerActionEvent;
 import io.github.lino9999.customspawners.config.Messages;
 import io.github.lino9999.customspawners.config.Settings;
 import io.github.lino9999.customspawners.config.SpawnerCatalog;
+import io.github.lino9999.customspawners.hooks.WildStackerBridge;
 import io.github.lino9999.customspawners.model.BlockPosition;
 import io.github.lino9999.customspawners.model.PlacedSpawner;
 import io.github.lino9999.customspawners.model.SpawnConditions;
@@ -11,6 +14,7 @@ import io.github.lino9999.customspawners.model.SpawnOutput;
 import io.github.lino9999.customspawners.model.SpawnerTier;
 import io.github.lino9999.customspawners.model.StackKey;
 import io.github.lino9999.customspawners.service.BoostRegistry;
+import io.github.lino9999.customspawners.service.SpawnerItems;
 import io.github.lino9999.customspawners.storage.SpawnerRepository;
 
 import org.bukkit.Bukkit;
@@ -60,6 +64,7 @@ public final class SpawnEngine implements Listener {
     private final SpawnerCatalog catalog;
     private final SpawnerRepository repository;
     private final BoostRegistry boosts;
+    private final SpawnerItems items;
     private final Map<BlockPosition, PlacedSpawner> active = new HashMap<>();
     private final LinkedHashSet<BlockPosition> queue = new LinkedHashSet<>();
     private final SpawnSafety safety = new SpawnSafety();
@@ -78,12 +83,14 @@ public final class SpawnEngine implements Listener {
             Settings settings,
             SpawnerCatalog catalog,
             SpawnerRepository repository,
-            BoostRegistry boosts) {
+            BoostRegistry boosts,
+            SpawnerItems items) {
         this.plugin = plugin;
         this.settings = settings;
         this.catalog = catalog;
         this.repository = repository;
         this.boosts = boosts;
+        this.items = items;
         this.visuals = new SpawnerVisuals(plugin, settings, catalog);
         spawnedType = new NamespacedKey(plugin, "spawned-type");
         spawnedTier = new NamespacedKey(plugin, "spawned-tier");
@@ -143,14 +150,7 @@ public final class SpawnEngine implements Listener {
                 tile.setMaxNearbyEntities(6);
                 tile.setDelay(200);
             }
-            var tier = catalog.tier(spawner.first());
-            if (tier != null) {
-                tier.outputs().stream()
-                        .filter(output -> output.kind() == SpawnOutput.Kind.ENTITY)
-                        .findFirst()
-                        .ifPresent(
-                                output -> tile.setSpawnedType(EntityType.valueOf(output.value())));
-            }
+            items.apply(tile, spawner);
             tile.update(false, false);
         }
         visuals.update(spawner, pauseReason(spawner));
@@ -405,6 +405,7 @@ public final class SpawnEngine implements Listener {
             entity.remove();
             return false;
         }
+        WildStackerBridge.stack(plugin, entity);
         return true;
     }
 
@@ -558,6 +559,15 @@ public final class SpawnEngine implements Listener {
         for (BlockPosition position :
                 active.keySet().stream().filter(value -> value.world().equals(world)).toList())
             deactivate(position);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPreVanillaSpawn(PreSpawnerSpawnEvent event) {
+        if (repository.get(BlockPosition.of(event.getSpawnerLocation().getBlock())) != null
+                || settings.bool("spawning.disable-natural")) {
+            event.setCancelled(true);
+            event.setShouldAbortSpawn(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

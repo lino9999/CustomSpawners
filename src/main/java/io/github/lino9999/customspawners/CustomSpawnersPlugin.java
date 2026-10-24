@@ -9,6 +9,7 @@ import io.github.lino9999.customspawners.gui.Menu;
 import io.github.lino9999.customspawners.gui.Menus;
 import io.github.lino9999.customspawners.hooks.EconomyBridge;
 import io.github.lino9999.customspawners.hooks.ProtectionBridge;
+import io.github.lino9999.customspawners.hooks.WildStackerBridge;
 import io.github.lino9999.customspawners.listener.SpawnerListener;
 import io.github.lino9999.customspawners.service.BoostRegistry;
 import io.github.lino9999.customspawners.service.CraftingService;
@@ -61,12 +62,13 @@ public final class CustomSpawnersPlugin extends JavaPlugin {
             messages = new Messages(this);
             catalog = new SpawnerCatalog(this);
             catalog.reload();
+            WildStackerBridge.verify(this);
             store = new StateStore(this);
             store.load(repository, progress, boosts);
             items = new SpawnerItems(this, catalog);
             economy = new EconomyBridge(this, settings);
             protection = new ProtectionBridge(this, settings);
-            engine = new SpawnEngine(this, settings, catalog, repository, boosts);
+            engine = new SpawnEngine(this, settings, catalog, repository, boosts, items);
             service =
                     new SpawnerService(
                             this,
@@ -87,6 +89,7 @@ public final class CustomSpawnersPlugin extends JavaPlugin {
             manager.registerEvents(crafting, this);
             SpawnerListener listener = new SpawnerListener(this);
             manager.registerEvents(listener, this);
+            WildStackerBridge.connect(this);
             var executor = new SpawnerCommand(this);
             for (String name : List.of("customspawners", "cspawnershop", "cspawnerstats")) {
                 var command = Objects.requireNonNull(getCommand(name));
@@ -112,7 +115,7 @@ public final class CustomSpawnersPlugin extends JavaPlugin {
                     .log(
                             Level.SEVERE,
                             "CustomSpawners could not start; existing configuration and state were"
-                                + " preserved.",
+                                    + " preserved.",
                             ex);
             getServer().getPluginManager().disablePlugin(this);
         }
@@ -133,6 +136,7 @@ public final class CustomSpawnersPlugin extends JavaPlugin {
     }
 
     public void reloadPlugin() throws Exception {
+        WildStackerBridge.verify(this);
         YamlConfiguration candidate = loadSettings();
         new Messages(this);
         catalog.reload();

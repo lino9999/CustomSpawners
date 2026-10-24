@@ -1,4 +1,5 @@
 prefix: '&8[&6CustomSpawners&8] &r'
+pickup-tool-required: '&cUse a diamond or netherite pickaxe, or an allowed Silk Touch pickaxe. This spawner has been preserved.'
 no-permission: '&cYou do not have permission to do that.'
 player-only: '&cThis command requires a player.'
 invalid: '&c{reason}'

@@ -40,7 +40,16 @@ public final class Menu implements InventoryHolder {
             String name,
             List<String> lore,
             BiConsumer<Player, ClickType> action) {
-        ItemStack item = new ItemStack(material);
+        button(slot, new ItemStack(material), name, lore, action);
+    }
+
+    public void button(
+            int slot,
+            ItemStack template,
+            String name,
+            List<String> lore,
+            BiConsumer<Player, ClickType> action) {
+        ItemStack item = template.clone();
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(Messages.color(name));
         meta.setLore(lore.stream().map(Messages::color).toList());

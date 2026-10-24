@@ -19,11 +19,14 @@ Author Lino. English source names, messages, README and documentation. No code c
 - service: item encoding, transactions, economy, access, player progress and crafting.
 - listener: event adapters; respect cancellations and validate mutations again on the main thread.
 - command and gui: thin entry points into services; never trust names or inventory titles as identity.
+- hooks: optional economy/protection adapters and WildStacker coexistence. WildStacker must not manage spawner blocks or native pre-spawn optimization. Use its public async stacking API for generated mobs; keep different CustomSpawners type/tier metadata separate.
 - api: cancellable extension events and service access.
 
 ## Invariants
 
 All Bukkit world, inventory and domain mutations run on the main server thread. Async persistence receives detached data only, with one ordered writer and atomic replace. Validate configuration before publishing it. Never overwrite unreadable storage. No force-loaded chunks. Stack counts are positive and bounded. Costs must be finite and nonnegative. Check permission, access, catalog validity, limits, inventory capacity and cancellable events before consuming money/items/levels. A rejected operation has no charge or partial mutation. Refund an external economy charge if final delivery fails. Tagged spawner items carry type/tier/count in PDC, never lore. Unknown PDC is rejected. Expired boosts never produce output. Entity caps include boosts. GUIs cancel clicks and drags and recheck access at click time. Never trust cancelled placement, break, spawn or explosion events.
+
+The shop and buy service share the same mob-only eligibility check across every tier. Armor Stand is LivingEntity but not Mob. Item native BlockStateMeta and placed tile PDC must match the authoritative stack data. Preserve a spawner when the pickup tool is invalid. Suppress native spawner ticks in Paper's pre-spawn event before another plugin can mutate entity stacks.
 
 ## Build and checks
 

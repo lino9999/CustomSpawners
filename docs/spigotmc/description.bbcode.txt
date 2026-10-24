@@ -16,10 +16,10 @@ Built for survival, Skyblock, factions and economy servers, with English message
 [*][B]Omni spawners:[/B] combine multiple types and tiers, then manage each component from a menu.
 [*][B]Configurable tiers:[/B] buy stack units or tier upgrades with money or experience levels.
 [*][B]Four generator modes:[/B] entities, items, blocks and console commands, including mixed outputs.
-[*][B]Spawner shop:[/B] paginated browsing, configurable prices and purchases of 1, 10 or 64 items.
+[*][B]Mob spawner shop:[/B] paginated browsing and typed mob spawners; no Armor Stand or item generators. Buy 1, 10 or 64.
 [*][B]Timed boosts:[/B] buy extra output for a spawner or grant timed/permanent owner bonuses.
 [*][B]Conversion:[/B] change spawner types using money or spawn eggs.
-[*][B]Silk Touch pickup:[/B] configure collection requirements, drop chances and whole-stack pickup.
+[*][B]Pickaxe pickup:[/B] ordinary diamond/netherite or eligible Silk Touch pickaxes, inventory delivery and whole-stack collection.
 [*][B]Custom mob loot:[/B] quantities, chances, item names, lore, experience and command rewards.
 [*][B]Kill rewards:[/B] guaranteed milestones, random spawner rewards and player statistics.
 [*][B]Farm conditions:[/B] biome, height, light, nearby players, entity caps, storms and ground materials.
@@ -39,7 +39,7 @@ Built for survival, Skyblock, factions and economy servers, with English message
 [CODE]/csp give YourName zombie 1 1 1
 /csp shop
 /csp inspect[/CODE]
-Right-click a spawner with another tagged spawner item to combine them. Use a spawn egg to convert it. Mine with Silk Touch to collect it; sneak to collect the whole mixed stack when enabled.
+Right-click a spawner with another tagged spawner item to combine them. Use a spawn egg to convert it. Mine with a diamond/netherite or eligible Silk Touch pickaxe to collect it; sneak to collect the whole mixed stack when enabled.
 
 [SIZE=5][B][COLOR=#E8A541]Requirements and integrations[/COLOR][/B][/SIZE]
 [LIST]
@@ -77,3 +77,5 @@ For bug reports, include your Paper version, Java version, CustomSpawners versio
 
 [CENTER][B]CustomSpawners by Lino[/B]
 Open source under the MIT license.[/CENTER]
+
+[B]WildStacker:[/B] use WildStacker for mobs and dropped items, and CustomSpawners for spawners. Disable WildStacker spawners.enabled, spawners.spawners-override.enabled and spawners.listen-paper-pre-spawn-event, then restart. Use a WildStacker build supporting your server version.

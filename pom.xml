@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.github.lino9999</groupId>
   <artifactId>customspawners</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <name>CustomSpawners</name>
   <description>Configurable spawner stacking, tiers, generators and economy for Paper.</description>
   <url>https://github.com/lino9999/CustomSpawners</url>
@@ -13,9 +13,11 @@
   </properties>
   <repositories>
     <repository><id>papermc</id><url>https://repo.papermc.io/repository/maven-public/</url></repository>
+    <repository><id>bg-software</id><url>https://repo.bg-software.com/repository/api/</url></repository>
   </repositories>
   <dependencies>
     <dependency><groupId>io.papermc.paper</groupId><artifactId>paper-api</artifactId><version>${paper.version}</version><scope>provided</scope></dependency>
+    <dependency><groupId>com.bgsoftware</groupId><artifactId>WildStackerAPI</artifactId><version>2026.3</version><scope>provided</scope></dependency>
   </dependencies>
   <build>
     <finalName>CustomSpawners-${project.version}</finalName>

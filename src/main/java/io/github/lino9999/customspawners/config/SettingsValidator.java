@@ -26,6 +26,8 @@ public final class SettingsValidator {
                     "stacking.omni",
                     "stacking.deny-nearby",
                     "pickup.silk-touch",
+                    "pickup.diamond-pickaxe",
+                    "pickup.placed-to-inventory",
                     "pickup.only-placed",
                     "pickup.sneak-whole-stack",
                     "pickup.always-whole-stack",
@@ -89,7 +91,7 @@ public final class SettingsValidator {
                     throw invalid(
                             path,
                             "Expected nonempty strings of at most 256 characters without control"
-                                + " characters");
+                                    + " characters");
                 }
             }
         }
@@ -102,7 +104,7 @@ public final class SettingsValidator {
                 throw invalid(
                         path,
                         "Expected a nonempty string without surrounding whitespace or control"
-                            + " characters");
+                                + " characters");
             }
         }
         String provider = config.getString("economy.provider").toLowerCase(Locale.ROOT);

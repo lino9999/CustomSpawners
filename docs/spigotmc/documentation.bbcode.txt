@@ -1,11 +1,11 @@
 [CENTER][SIZE=7][B][COLOR=#E8A541]CustomSpawners Documentation[/COLOR][/B][/SIZE]
-[B]Version 1.0.0 | Author: Lino | Paper 1.21.11 - 26.3[/B]
+[B]Version 1.0.1 | Author: Lino | Paper 1.21.11 - 26.3[/B]
 [URL=https://github.com/lino9999/CustomSpawners/releases/latest]Download[/URL] | [URL=https://github.com/lino9999/CustomSpawners]Source[/URL] | [URL=https://github.com/lino9999/CustomSpawners/issues]Support[/URL][/CENTER]
 
 [SIZE=5][B]1. Installation[/B][/SIZE]
 [LIST=1]
 [*]Use Paper 1.21.11 with Java 21+, or Paper 26.x with Java 25+.
-[*]Download CustomSpawners-1.0.0.jar from the GitHub release.
+[*]Download CustomSpawners-1.0.1.jar from the GitHub release.
 [*]Stop the server, place the JAR in plugins and start the server.
 [*]Open plugins/CustomSpawners and review config.yml, spawners.yml and messages.yml.
 [*]Install an optional supported economy/protection integration if needed.
@@ -22,7 +22,7 @@ This gives one item containing one tier-1 Zombie spawner. Place it and right-cli
 [*]Right-click with a tagged spawner item: combine its stack with the placed spawner.
 [*]Right-click with a spawn egg: convert the selected first component when enabled.
 [*]Right-click with another item or an empty hand: open the menu.
-[*]Use a Silk Touch pickaxe: collect the spawner according to pickup permissions and chances.
+[*]Use a diamond/netherite pickaxe or an allowed Silk Touch pickaxe: collect the spawner according to pickup permissions and chances. Invalid tools preserve the block.
 [*]Sneak while collecting: collect the whole mixed stack when enabled.
 [*]Power with redstone: pause output when redstone-disable is enabled.
 [/LIST]
@@ -148,10 +148,12 @@ Files are generated in plugins/CustomSpawners. Use spaces for YAML indentation. 
 [/LIST]
 [B]pickup[/B]
 [LIST]
-[*]silk-touch / silk-level: require Silk Touch collection; defaults true / 1.
+[*]diamond-pickaxe: allow ordinary diamond and netherite pickaxes; default true.
+[*]silk-touch / silk-level: additionally allow eligible Silk Touch pickaxes; defaults true / 1.
 [*]only-placed: restrict drops to player-placed spawners; default false.
 [*]sneak-whole-stack / always-whole-stack: whole mixed-stack pickup; defaults true / false.
-[*]to-inventory: deliver collected items directly, dropping overflow; default false.
+[*]to-inventory: deliver collected items directly, dropping overflow; default true for new configurations.
+[*]placed-to-inventory: return player-placed spawners to inventory even if to-inventory is false; default true, including existing configurations.
 [*]natural-chance / placed-chance: collection drop percentages; both default 100.
 [*]prevent-explosions: exclude managed spawners from explosion destruction; default false.
 [*]tnt-chance / creeper-chance / other-explosion-chance: explosion drop percentages; defaults 100 / 100 / 0.
@@ -393,3 +395,14 @@ Use the GitHub issue tracker with exact Paper, Java and plugin versions, the ful
 
 [CENTER][URL=https://github.com/lino9999/CustomSpawners/releases/latest][B]Download CustomSpawners[/B][/URL]
 [B]Created by Lino | MIT License[/B][/CENTER]
+
+[SIZE=5][B]WildStacker compatibility[/B][/SIZE]
+CustomSpawners owns spawner blocks, quantities, tiers and collection. WildStacker can stack spawned mobs and dropped items. Set these existing options in plugins/WildStacker/config.yml, then restart:
+[CODE]spawners:
+  enabled: false
+  spawners-override:
+    enabled: false
+  listen-paper-pre-spawn-event: false[/CODE]
+Leave entities.enabled and items.enabled enabled as needed. Generated mobs use WildStacker's public stacking API; different CustomSpawners types and tiers cannot merge. CustomSpawners refuses to activate if both plugins would manage spawners. Install a WildStacker build supporting your Minecraft version; 2025.2-b178 cannot start on Paper 26.3, while 2026.3 can. Existing WildStacker spawner stacks are not imported: recover or migrate them with WildStacker before changing spawner ownership.
+
+The shop contains mob-only definitions across all tiers. Armor Stand and item/block/command generators remain excluded even if their shop flag is true. Existing Armor Stand definitions and owned spawners are preserved; an administrator can aim at one and use /csp change pig or another mob ID.
