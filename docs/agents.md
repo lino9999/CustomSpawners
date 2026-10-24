@@ -4,6 +4,8 @@
 
 Read this file, pom.xml, the target module, and its tests. Use rg with a path. Never scan .tools/, Plugin originale/, target/, runtime/ or .git/ by default. .ignore and .rgignore keep large evidence and generated files out of searches; .gitignore keeps them out of commits. GitHub repository: lino9999/CustomSpawners.
 
+Read docs/TESTING.md for verification status. Detailed docs/verification/ results are deliberately excluded from default searches; select an exact report only when needed.
+
 ## Rules
 
 Author Lino. English source names, messages, README and documentation. No code comments. Java 21 bytecode, public Bukkit/Paper API only; no NMS or CraftBukkit internals. Target Paper 1.21.11 through 26.3; 26.x servers need Java 25. Never claim a version is runtime-tested without a saved result. Never copy analyzed source or bundled dependencies into this project.

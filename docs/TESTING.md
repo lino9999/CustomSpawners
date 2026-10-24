@@ -14,6 +14,24 @@ On Windows use `mvnw.cmd`. The Maven wrapper downloads Maven 3.9.11. The default
 
 The suite covers strict configuration validation, expression parsing, collision and chunk-boundary checks, YAML editor values, command duration and arity, stack/null/count invariants, chunk and owner indexes, boost expiry, kill counts, exact state decoding and idempotent economy refunds bound to their original provider.
 
+## Recorded results: 24 October 2026
+
+All **131 unit tests** passed with zero skipped tests. Clean builds passed against Paper APIs `1.21.11-R0.1-SNAPSHOT`, `26.1.2.build.74-stable`, `26.2.build.134-stable` and `26.3.build.218-stable`. The corresponding four-job [GitHub Actions run passed](https://github.com/lino9999/CustomSpawners/actions/runs/40049581652).
+
+The same production JAR, built against the minimum API with Java 21 bytecode, passed all 28 first-phase integration checks and the actual-restart replay check on each server below. Reports record exact server/Java identities and individual outcomes.
+
+| Paper build | Java | Integration | Restart replay | Reports |
+| --- | --- | --- | --- | --- |
+| 1.21.11-128 | Temurin 21.0.12.1 | 28 passed | 1 passed | [First phase](verification/paper-1.21.11.yml), [restart](verification/paper-1.21.11-restart.yml) |
+| 26.1.1-29 (historical alpha build) | Temurin 25.0.4.1 | 28 passed | 1 passed | [First phase](verification/paper-26.1.1.yml), [restart](verification/paper-26.1.1-restart.yml) |
+| 26.1.2-74 | Temurin 25.0.4.1 | 28 passed | 1 passed | [First phase](verification/paper-26.1.2.yml), [restart](verification/paper-26.1.2-restart.yml) |
+| 26.2-134 | Temurin 25.0.4.1 | 28 passed | 1 passed | [First phase](verification/paper-26.2.yml), [restart](verification/paper-26.2-restart.yml) |
+| 26.3-218 | Temurin 25.0.4.1 | 28 passed | 1 passed | [First phase](verification/paper-26.3.yml), [restart](verification/paper-26.3-restart.yml) |
+
+Production artifact SHA-256: `849499418894a1ac453658ccdf2a7d2d0d404724a06331d2d4d2ec0969c2bf46`.
+
+Integration fixtures and downloaded servers/runtimes stay outside the plugin JAR. All fixture servers were stopped cleanly after the final replay. Existing user server worlds were not modified. The archived alpha build is a compatibility probe, not a recommendation to deploy an outdated server.
+
 ## Real-server fixture
 
 Source and instructions: [scripts/integration](../scripts/integration/README.md). This builds a separate test plugin; it is not bundled into CustomSpawners. Use dedicated loopback-only server directories with accepted server terms. The fixture creates its own test world and modifies test configuration.

@@ -1,0 +1,10 @@
+server: '26.1.2-74-e4e17fc (MC: 26.1.2)'
+java: 25.0.4.1
+plugin: 1.0.0
+phase: restart-replay
+tests:
+  restart-replays-world-stack-owner-statistics-and-boosts:
+    status: PASS
+state: phase2-complete
+passed: 1
+failed: 0

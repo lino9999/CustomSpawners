@@ -1,0 +1,64 @@
+server: '26.3-218-1b9bf5c (MC: 26.3)'
+java: 25.0.4.1
+plugin: 1.0.0
+phase: first-run
+tests:
+  catalog-runtime-mob-defaults:
+    status: PASS
+  catalog-invalid-edit-rollback:
+    status: PASS
+  catalog-invalid-reload-rollback:
+    status: PASS
+  settings-invalid-edit-rollback:
+    status: PASS
+  mixed-pdc-roundtrip-and-validation:
+    status: PASS
+  entity-output-flags-and-quantity:
+    status: PASS
+  additive-boosts-clamped-by-nearby-cap:
+    status: PASS
+  cancelled-spawn-action-produces-nothing:
+    status: PASS
+  cancelled-creature-event-produces-nothing:
+    status: PASS
+  redstone-pauses-output:
+    status: PASS
+  vanilla-spawn-event-cancelled-with-healthy-native-tile:
+    status: PASS
+  item-output-quantity-and-legal-stack-sizes:
+    status: PASS
+  block-output-quantity:
+    status: PASS
+  cancelled-block-form-preserves-air-and-statistics:
+    status: PASS
+  command-output-dispatch-and-placeholders:
+    status: PASS
+  spawn-formula-variables-and-stack-multiplication:
+    status: PASS
+  spawn-formula-runtime-error-produces-no-output:
+    status: PASS
+  spawn-formula-output-bound-is-enforced:
+    status: PASS
+  xp-insufficient-upgrade-does-not-mutate:
+    status: PASS
+  cancelled-upgrade-does-not-charge-xp:
+    status: PASS
+  xp-upgrade-success-charges-exactly-once:
+    status: PASS
+  cancelled-stacking-preserves-held-item:
+    status: PASS
+  money-provider-failure-preserves-state:
+    status: PASS
+  hologram-refresh-does-not-duplicate:
+    status: PASS
+  chunk-unload-removes-visuals-without-force-loading:
+    status: PASS
+  chunk-reload-restores-exactly-one-visual:
+    status: PASS
+  persistence-prepare:
+    status: PASS
+  persistence-disk-roundtrip:
+    status: PASS
+state: phase1-complete-restart-required
+passed: 28
+failed: 0
