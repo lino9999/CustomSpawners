@@ -1,0 +1,142 @@
+package io.github.lino9999.customspawners.service;
+
+import io.github.lino9999.customspawners.config.Messages;
+import io.github.lino9999.customspawners.config.SpawnerCatalog;
+import io.github.lino9999.customspawners.model.StackKey;
+
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+public final class SpawnerItems {
+    private final NamespacedKey dataKey;
+    private final SpawnerCatalog catalog;
+
+    public SpawnerItems(JavaPlugin plugin, SpawnerCatalog catalog) {
+        dataKey = new NamespacedKey(plugin, "stacks");
+        this.catalog = catalog;
+    }
+
+    public boolean tagged(ItemStack item) {
+        return item != null
+                && item.hasItemMeta()
+                && item.getItemMeta().getPersistentDataContainer().has(dataKey);
+    }
+
+    public Map<StackKey, Integer> read(ItemStack item) {
+        if (!tagged(item)) return Map.of();
+        if (item.getType() != Material.SPAWNER
+                || !item.getItemMeta()
+                        .getPersistentDataContainer()
+                        .has(dataKey, PersistentDataType.STRING))
+            throw new IllegalArgumentException("Invalid spawner item data.");
+        String data =
+                item.getItemMeta()
+                        .getPersistentDataContainer()
+                        .get(dataKey, PersistentDataType.STRING);
+        if (data == null || data.length() > 32768)
+            throw new IllegalArgumentException("Invalid spawner item data.");
+        Map<StackKey, Integer> stacks = new LinkedHashMap<>();
+        long total = 0;
+        for (String entry : data.split(";", -1)) {
+            String[] parts = entry.split(":", -1);
+            if (parts.length != 3) throw new IllegalArgumentException("Invalid spawner item data.");
+            StackKey supplied = new StackKey(parts[0], parts[1]);
+            int count = Integer.parseInt(parts[2]);
+            var type = catalog.get(supplied.type());
+            var tier = catalog.tier(supplied);
+            if (type == null || !type.enabled() || tier == null || count < 1)
+                throw new IllegalArgumentException("Unknown or disabled spawner item.");
+            StackKey key = new StackKey(type.id(), tier.id());
+            if (stacks.containsKey(key))
+                throw new IllegalArgumentException("Duplicate spawner stack.");
+            total += count;
+            if (total > 1_000_000) throw new IllegalArgumentException("Spawner item is too large.");
+            stacks.put(key, count);
+        }
+        return stacks;
+    }
+
+    public ItemStack create(StackKey key, int count) {
+        return create(Map.of(key, count));
+    }
+
+    public ItemStack create(Map<StackKey, Integer> stacks) {
+        if (stacks.isEmpty()) throw new IllegalArgumentException("Spawner stack cannot be empty.");
+        Map<StackKey, Integer> normalized = new LinkedHashMap<>();
+        for (var entry : stacks.entrySet()) {
+            var type = catalog.get(entry.getKey().type());
+            var tier = catalog.tier(entry.getKey());
+            if (type == null || tier == null || entry.getValue() == null || entry.getValue() < 1)
+                throw new IllegalArgumentException("Invalid spawner stack.");
+            StackKey canonical = new StackKey(type.id(), tier.id());
+            if (normalized.putIfAbsent(canonical, entry.getValue()) != null)
+                throw new IllegalArgumentException("Duplicate spawner stack.");
+        }
+        stacks = normalized;
+        StringBuilder data = new StringBuilder();
+        List<String> lore = new ArrayList<>();
+        int total = 0;
+        for (var entry : stacks.entrySet()) {
+            var type = catalog.get(entry.getKey().type());
+            var tier = catalog.tier(entry.getKey());
+            if (type == null || tier == null || entry.getValue() < 1)
+                throw new IllegalArgumentException("Invalid spawner stack.");
+            if (!data.isEmpty()) data.append(';');
+            data.append(entry.getKey().type())
+                    .append(':')
+                    .append(entry.getKey().tier())
+                    .append(':')
+                    .append(entry.getValue());
+            total = Math.addExact(total, entry.getValue());
+            if (total > 1_000_000 || data.length() > 32768)
+                throw new IllegalArgumentException("Spawner item is too large.");
+            lore.add(
+                    Messages.color(
+                            "&7"
+                                    + type.name()
+                                    + " &8/ &7"
+                                    + tier.name()
+                                    + " &fx"
+                                    + entry.getValue()));
+        }
+        ItemStack item = new ItemStack(Material.SPAWNER);
+        ItemMeta meta = item.getItemMeta();
+        String name =
+                stacks.size() == 1
+                        ? catalog.get(stacks.keySet().iterator().next().type()).name()
+                        : "Omni";
+        meta.setDisplayName(Messages.color("&6" + name + " Spawner &7[&e" + total + "x&7]"));
+        meta.setLore(lore);
+        meta.getPersistentDataContainer().set(dataKey, PersistentDataType.STRING, data.toString());
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    public static boolean hasSpace(Player player, ItemStack item, int count) {
+        if (item == null || count < 1) return false;
+        long room = 0;
+        int maximum = Math.min(item.getMaxStackSize(), player.getInventory().getMaxStackSize());
+        for (ItemStack slot : player.getInventory().getStorageContents()) {
+            if (slot == null || slot.getType().isAir()) room += maximum;
+            else if (slot.isSimilar(item)) room += Math.max(0, maximum - slot.getAmount());
+        }
+        return room >= count;
+    }
+
+    public static void giveOrDrop(Player player, ItemStack item) {
+        player.getInventory()
+                .addItem(item)
+                .values()
+                .forEach(left -> player.getWorld().dropItemNaturally(player.getLocation(), left));
+    }
+}

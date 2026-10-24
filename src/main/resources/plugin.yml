@@ -1,0 +1,95 @@
+name: CustomSpawners
+version: '${project.version}'
+main: io.github.lino9999.customspawners.CustomSpawnersPlugin
+api-version: '1.21.11'
+author: Lino
+description: Configurable spawner stacking, tiers, generators, custom loot and economy.
+website: https://github.com/lino9999/CustomSpawners
+softdepend: [Vault, PlayerPoints, WorldGuard, GriefPrevention, PlaceholderAPI]
+commands:
+  customspawners:
+    description: Manage CustomSpawners and open spawner menus.
+    aliases: [csp, cspawners]
+    usage: /<command> help
+  cspawnershop:
+    description: Open the CustomSpawners shop.
+    aliases: [cspshop]
+    usage: /<command>
+    permission: customspawners.shop
+  cspawnerstats:
+    description: Show CustomSpawners mob kill statistics.
+    aliases: [cspstats]
+    usage: /<command>
+    permission: customspawners.stats
+permissions:
+  customspawners.use:
+    default: true
+  customspawners.place:
+    default: true
+  customspawners.break:
+    default: true
+  customspawners.stack:
+    default: true
+  customspawners.omni:
+    default: true
+  customspawners.shop:
+    default: true
+  customspawners.stats:
+    default: true
+  customspawners.upgrade:
+    default: true
+  customspawners.convert:
+    default: true
+  customspawners.boost:
+    default: true
+  customspawners.rewards:
+    default: true
+  customspawners.silk:
+    default: true
+  customspawners.craft:
+    default: true
+  customspawners.admin:
+    default: op
+    children:
+      customspawners.give: true
+      customspawners.reload: true
+      customspawners.editor: true
+      customspawners.settings: true
+      customspawners.spawn: true
+      customspawners.change: true
+      customspawners.adminboost: true
+      customspawners.openshop: true
+      customspawners.save: true
+      customspawners.remove: true
+      customspawners.bypass.protection: true
+      customspawners.bypass.limits: true
+      customspawners.bypass.silk: true
+      customspawners.bypass.cost: true
+  customspawners.give:
+    default: op
+  customspawners.reload:
+    default: op
+  customspawners.editor:
+    default: op
+  customspawners.settings:
+    default: op
+  customspawners.spawn:
+    default: op
+  customspawners.change:
+    default: op
+  customspawners.adminboost:
+    default: op
+  customspawners.openshop:
+    default: op
+  customspawners.save:
+    default: op
+  customspawners.remove:
+    default: op
+  customspawners.bypass.protection:
+    default: op
+  customspawners.bypass.limits:
+    default: op
+  customspawners.bypass.silk:
+    default: op
+  customspawners.bypass.cost:
+    default: op

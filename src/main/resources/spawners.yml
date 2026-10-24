@@ -1,0 +1,108 @@
+schema-version: 1
+generate-mob-spawners: true
+defaults:
+  type:
+    enabled: true
+    shop: true
+    shop-order: 0
+    price: 1000.0
+    convertible: true
+    conversion-cost: 4.5
+    egg-cost: 1
+    kill-goal: 0
+    kill-chance: 0.0
+    craftable: false
+    recipe: []
+    ingredients: {}
+  tier:
+    min-delay: 200
+    max-delay: 800
+    min-spawn: 1
+    max-spawn: 4
+    spawn-range: 4.0
+    upgrade-money: 10.0
+    upgrade-levels: 2
+    pickup-cost: 0.0
+    spawn-limit: 0
+    ai: true
+    baby: false
+    on-fire: false
+    entity-name: ''
+    particle: ''
+    conditions:
+      biomes: []
+      min-y: -64
+      max-y: 320
+      min-light: 0
+      max-light: 15
+      nearby-players: 1
+      player-range: 16.0
+      max-entities: 6
+      entity-range: 8.0
+      storm: false
+      spawn-on: []
+    drops: []
+spawners:
+  iron_generator:
+    name: Iron Generator
+    icon: IRON_INGOT
+    enabled: false
+    convertible: false
+    shop-order: 1000
+    craftable: false
+    recipe:
+      - 'III'
+      - 'ISI'
+      - 'III'
+    ingredients:
+      I: IRON_INGOT
+      S: SPAWNER
+    tiers:
+      '1':
+        name: Tier 1
+        outputs:
+          - kind: ITEM
+            value: IRON_INGOT
+            chance: 100.0
+            amount: 1
+      '2':
+        name: Tier 2
+        min-delay: 100
+        max-delay: 200
+        outputs:
+          - kind: ITEM
+            value: IRON_INGOT
+            chance: 100.0
+            amount: 2
+  stone_generator:
+    name: Stone Generator
+    icon: STONE
+    enabled: false
+    convertible: false
+    shop-order: 1001
+    tiers:
+      '1':
+        name: Tier 1
+        min-spawn: 1
+        max-spawn: 1
+        outputs:
+          - kind: BLOCK
+            value: STONE
+            chance: 100.0
+            amount: 1
+  reward_generator:
+    name: Reward Generator
+    icon: CHEST
+    enabled: false
+    convertible: false
+    shop-order: 1002
+    tiers:
+      '1':
+        name: Tier 1
+        min-spawn: 1
+        max-spawn: 1
+        outputs:
+          - kind: COMMAND
+            value: 'give {player} diamond 1'
+            chance: 100.0
+            amount: 1

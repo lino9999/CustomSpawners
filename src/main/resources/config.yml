@@ -1,0 +1,61 @@
+spawning:
+  amount-expression: '{RAND}'
+  tick-interval: 10
+  max-operations-per-tick: 256
+  redstone-disable: true
+  disable-natural: false
+  no-ai: false
+  hostile-retaliate-only: false
+  extra-delay: 0
+  particles: true
+  holograms: true
+stacking:
+  max-stack: 5
+  omni: true
+  force-combine-radius: 0
+  deny-nearby: false
+limits:
+  per-chunk: -1
+  per-player: -1
+pickup:
+  silk-touch: true
+  silk-level: 1
+  only-placed: false
+  sneak-whole-stack: true
+  always-whole-stack: false
+  to-inventory: false
+  natural-chance: 100.0
+  placed-chance: 100.0
+  prevent-explosions: false
+  tnt-chance: 100.0
+  creeper-chance: 100.0
+  other-explosion-chance: 0.0
+conversion:
+  eggs: true
+  return-old-egg: true
+upgrades:
+  money: true
+  levels: true
+boosts:
+  max-amount: 5
+  currency: DIAMOND
+  cost-per-minute: 2.0
+rewards:
+  enabled: true
+  count-unnatural: false
+  kill-goal: 100
+  drop-chance: 2.5
+  alert-interval: 10
+economy:
+  provider: Vault
+protection:
+  hooks: true
+  owner-only: false
+  repel-liquids-radius: 1
+creative:
+  charge: false
+storage:
+  autosave-seconds: 15
+blacklist:
+  worlds: []
+  types: []

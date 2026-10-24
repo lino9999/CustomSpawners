@@ -1,0 +1,11 @@
+.git/
+.tools/
+Plugin originale/
+target/
+build/
+.gradle/
+.idea/
+runtime/
+*.log
+*.jar
+*.zip
