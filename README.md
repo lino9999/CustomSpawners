@@ -1,6 +1,7 @@
 # CustomSpawners
 
 [![Build](https://github.com/lino9999/CustomSpawners/actions/workflows/build.yml/badge.svg)](https://github.com/lino9999/CustomSpawners/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/lino9999/CustomSpawners)](https://github.com/lino9999/CustomSpawners/releases/latest)
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21.11%E2%80%9326.3-62B47A)
 ![Platform](https://img.shields.io/badge/Platform-Paper-49A5D5)
 ![License](https://img.shields.io/badge/License-MIT-blue)
@@ -35,12 +36,12 @@ Designed for survival, Skyblock, factions and economy servers, CustomSpawners us
 | Paper 1.21.11 | Java 21+ | Java 21 |
 | Paper 26.1–26.3 | Java 25+ | Java 21 |
 
-The compatibility target is **Paper 1.21.11 through 26.3**. Automated builds compile against both endpoint APIs. Runtime checks and their limits are recorded in [Testing](docs/TESTING.md). Paper forks may work but need their own checks. Folia and older Minecraft versions are outside the supported target.
+The compatibility target is **Paper 1.21.11 through 26.3**. Automated builds compile against four API versions. The previously completed verification and its limits are recorded in [Compatibility](docs/COMPATIBILITY.md). Paper forks may work but need their own checks. Folia and older Minecraft versions are outside the supported target.
 
 ## Installation
 
-1. Build with `./mvnw verify` on Linux/macOS or `mvnw.cmd verify` on Windows using JDK 21 or newer.
-2. Copy `target/CustomSpawners-1.0.0.jar` into the server's `plugins` folder and restart.
+1. Download the ready-to-use JAR from [GitHub Releases](https://github.com/lino9999/CustomSpawners/releases/latest). To build from source, use `./mvnw verify` or `mvnw.cmd verify` with JDK 21 or newer.
+2. Copy `CustomSpawners-1.0.0.jar` into the server's `plugins` folder and restart.
 3. Optionally install Vault with an economy provider, or PlayerPoints. WorldGuard and GriefPrevention are supported protection hooks.
 4. Configure `plugins/CustomSpawners/config.yml`, `spawners.yml` and `messages.yml`.
 5. Run `/csp reload`. Invalid settings or definitions are rejected and the previously loaded configuration remains active.
@@ -140,6 +141,10 @@ This is an independent implementation. Legacy binary APIs, proprietary item data
 
 ## Development
 
-The source separates models, configuration, persistence, spawning, services, hooks, listeners, commands and menus. Read [AI maintenance guide](docs/agents.md) for the module map and invariants. Run `./mvnw verify` before submitting a change. CI checks both endpoint API versions and publishes a build artifact.
+The source separates models, configuration, persistence, spawning, services, hooks, listeners, commands and menus. Read [AI maintenance guide](docs/agents.md) for the module map and invariants. Run `./mvnw verify` before submitting a change. CI checks compilation against four API versions and publishes a build artifact. Completed test sources, fixtures and raw reports were removed after verification at the maintainer's request.
+
+## SpigotMC publishing assets
+
+Ready-to-paste English [resource description](docs/spigotmc/description.bbcode.txt) and [full documentation](docs/spigotmc/documentation.bbcode.txt) are supplied in BBCode, alongside [pixel-art icon exports](assets/spigotmc). See the [publishing notes](docs/spigotmc/README.md). These files are also attached to the 1.0.0 release.
 
 Created and maintained by **Lino**. Licensed under [MIT](LICENSE).

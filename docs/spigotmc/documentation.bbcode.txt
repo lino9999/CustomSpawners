@@ -1,0 +1,395 @@
+[CENTER][SIZE=7][B][COLOR=#E8A541]CustomSpawners Documentation[/COLOR][/B][/SIZE]
+[B]Version 1.0.0 | Author: Lino | Paper 1.21.11 - 26.3[/B]
+[URL=https://github.com/lino9999/CustomSpawners/releases/latest]Download[/URL] | [URL=https://github.com/lino9999/CustomSpawners]Source[/URL] | [URL=https://github.com/lino9999/CustomSpawners/issues]Support[/URL][/CENTER]
+
+[SIZE=5][B]1. Installation[/B][/SIZE]
+[LIST=1]
+[*]Use Paper 1.21.11 with Java 21+, or Paper 26.x with Java 25+.
+[*]Download CustomSpawners-1.0.0.jar from the GitHub release.
+[*]Stop the server, place the JAR in plugins and start the server.
+[*]Open plugins/CustomSpawners and review config.yml, spawners.yml and messages.yml.
+[*]Install an optional supported economy/protection integration if needed.
+[*]Apply configuration changes with /csp reload.
+[/LIST]
+Paper is required. Spigot server software, Folia and older Minecraft versions are not supported targets. Listing this resource on SpigotMC does not change the server requirement.
+
+Paid money features require Vault [B]and an economy provider[/B], or PlayerPoints. Vault alone does not create balances. Free features and XP/item payments can be used without a money provider.
+
+[SIZE=5][B]2. First spawner[/B][/SIZE]
+[CODE]/csp give YourName zombie 1 1 1[/CODE]
+This gives one item containing one tier-1 Zombie spawner. Place it and right-click it to open the management menu.
+[LIST]
+[*]Right-click with a tagged spawner item: combine its stack with the placed spawner.
+[*]Right-click with a spawn egg: convert the selected first component when enabled.
+[*]Right-click with another item or an empty hand: open the menu.
+[*]Use a Silk Touch pickaxe: collect the spawner according to pickup permissions and chances.
+[*]Sneak while collecting: collect the whole mixed stack when enabled.
+[*]Power with redstone: pause output when redstone-disable is enabled.
+[/LIST]
+The default maximum stack is 5. Omni spawners can contain different types and tiers. Their menu lets you select a component before managing it. Targeted commands operate on the first component and require the block to be within eight blocks.
+
+[SIZE=5][B]3. Commands[/B][/SIZE]
+Main command: [B]/customspawners[/B]. Aliases: [B]/csp[/B], [B]/cspawners[/B].
+Angle brackets indicate required arguments. Square brackets indicate optional arguments.
+
+[SPOILER=Player commands]
+[TABLE]
+[TR][TH]Command[/TH][TH]Purpose[/TH][TH]Permission[/TH][/TR]
+[TR][TD]/csp help[/TD][TD]Show help[/TD][TD]Everyone[/TD][/TR]
+[TR][TD]/csp inspect[/TD][TD]Open the targeted spawner[/TD][TD]customspawners.use[/TD][/TR]
+[TR][TD]/csp shop[/TD][TD]Open the shop[/TD][TD]customspawners.shop[/TD][/TR]
+[TR][TD]/csp stats[/TD][TD]Open kill statistics[/TD][TD]customspawners.stats[/TD][/TR]
+[TR][TD]/csp upgrade[/TD][TD]Buy one stack unit using money by default[/TD][TD]customspawners.upgrade[/TD][/TR]
+[TR][TD]/csp convert[/TD][TD]Convert the first component using money[/TD][TD]customspawners.convert[/TD][/TR]
+[TR][TD]/csp boost[/TD][TD]Open the boost menu[/TD][TD]customspawners.boost[/TD][/TR]
+[/TABLE]
+[CODE]/csp upgrade [money|xp] [stack|tier]
+/csp convert <type>
+/csp boost [amount minutes][/CODE]
+Examples:
+[CODE]/csp upgrade xp stack
+/csp upgrade money tier
+/csp convert skeleton
+/csp boost 2 15[/CODE]
+Standalone shop: /cspawnershop, alias /cspshop.
+Standalone statistics: /cspawnerstats, alias /cspstats.
+[/SPOILER]
+
+[SPOILER=Administrative commands]
+[CODE]/csp give <player|all> <type|random> [tier] [items] [stack]
+/csp openshop <player>
+/csp playerboost <player> <amount|0> [duration]
+/csp change <type> [tier]
+/csp spawn
+/csp remove
+/csp editor
+/csp editor set <path> <yaml-value>
+/csp settings
+/csp settings set <path> <yaml-value>
+/csp reload
+/csp save[/CODE]
+[LIST]
+[*][B]give:[/B] delivers tagged items to an online player or all online players. Items defaults to 1 and is limited to 4096; stack defaults to 1 and is bounded by stacking.max-stack. Tier defaults to the type's first tier.
+[*][B]openshop:[/B] opens another online player's shop, subject to that player's shop permission.
+[*][B]playerboost:[/B] grants an owner bonus. Set amount to 0 to clear it. Duration accepts 30s, 15m, 2h or 3d; omitted duration or permanent means no expiry. Finite duration is limited to 365 days.
+[*][B]change:[/B] administratively replaces the first targeted component without purchasing a normal conversion; access, blacklist and change permissions still apply.
+[*][B]spawn:[/B] triggers an immediate attempt while respecting conditions and limits.
+[*][B]remove:[/B] removes the targeted spawner without dropping its contents.
+[*][B]editor/settings:[/B] open the corresponding menus; set validates a YAML edit before saving it.
+[*][B]reload:[/B] reloads settings, definitions, messages and supported hooks. Invalid configuration is rejected.
+[*][B]save:[/B] queues a state snapshot; it is not a command for editing spawner definitions.
+[/LIST]
+Command permissions are customspawners.give, .openshop, .adminboost, .change, .spawn, .remove, .editor, .settings, .reload and .save, each with the customspawners prefix. They default to operators and are included in customspawners.admin.
+
+Examples:
+[CODE]/csp give Steve zombie 1 4 1
+/csp playerboost Steve 2 30m
+/csp editor set spawners.zombie.price 2500
+/csp editor set spawners.iron_generator.enabled true
+/csp settings set limits.per-chunk 16[/CODE]
+[/SPOILER]
+
+[SIZE=5][B]4. Permissions[/B][/SIZE]
+Regular players receive these general feature permissions by default:
+[CODE]customspawners.use
+customspawners.place
+customspawners.break
+customspawners.stack
+customspawners.omni
+customspawners.shop
+customspawners.stats
+customspawners.upgrade
+customspawners.convert
+customspawners.boost
+customspawners.rewards
+customspawners.silk
+customspawners.craft[/CODE]
+Set a feature permission to false to restrict it. For applicable actions, an explicitly assigned per-type permission overrides the general action permission. Use lowercase catalog IDs:
+[CODE]customspawners.place.zombie
+customspawners.shop.iron_generator
+customspawners.break.skeleton
+customspawners.upgrade.zombie
+customspawners.convert.zombie
+customspawners.craft.iron_generator
+customspawners.rewards.zombie
+customspawners.change.zombie[/CODE]
+Actions may also require their general permission. Consult your permission manager's inherited nodes when diagnosing a denied action.
+
+[B]Administrative bypasses:[/B]
+[CODE]customspawners.bypass.protection
+customspawners.bypass.limits
+customspawners.bypass.silk
+customspawners.bypass.cost[/CODE]
+The cost bypass covers money, XP and item charges. Creative players are exempt from costs unless creative.charge is true. Operators inherit these bypasses through customspawners.admin; use a regular player account to check normal costs and limits.
+
+[SIZE=5][B]5. Global configuration[/B][/SIZE]
+Files are generated in plugins/CustomSpawners. Use spaces for YAML indentation. All probabilities are percentages from 0 to 100.
+
+[SPOILER=config.yml options]
+[B]spawning[/B]
+[LIST]
+[*]amount-expression: arithmetic output formula; default is {RAND}.
+[*]tick-interval: scheduler interval in server ticks; default 10, allowed 1-1200.
+[*]max-operations-per-tick: work budget for each scheduler run; default 256, allowed 1-4096.
+[*]redstone-disable: powered spawners pause output; default true.
+[*]disable-natural: stop natural spawners; default false.
+[*]no-ai: disable AI for generated mobs; default false.
+[*]hostile-retaliate-only: generated monsters attack in response rather than proactively; default false.
+[*]extra-delay: ticks added to cycle delay; default 0.
+[*]particles / holograms: enable optional tier particles and native display holograms; both default true.
+[/LIST]
+[B]stacking and limits[/B]
+[LIST]
+[*]stacking.max-stack: maximum total units in one placed spawner; default 5.
+[*]stacking.omni: permit mixed type/tier components; default true.
+[*]stacking.force-combine-radius: proximity combination distance; 0 disables it.
+[*]stacking.deny-nearby: reject nearby placement instead of combining; default false.
+[*]limits.per-chunk / limits.per-player: maximum physical spawner blocks; -1 means unlimited.
+[/LIST]
+[B]pickup[/B]
+[LIST]
+[*]silk-touch / silk-level: require Silk Touch collection; defaults true / 1.
+[*]only-placed: restrict drops to player-placed spawners; default false.
+[*]sneak-whole-stack / always-whole-stack: whole mixed-stack pickup; defaults true / false.
+[*]to-inventory: deliver collected items directly, dropping overflow; default false.
+[*]natural-chance / placed-chance: collection drop percentages; both default 100.
+[*]prevent-explosions: exclude managed spawners from explosion destruction; default false.
+[*]tnt-chance / creeper-chance / other-explosion-chance: explosion drop percentages; defaults 100 / 100 / 0.
+[/LIST]
+[B]conversion and upgrades[/B]
+[LIST]
+[*]conversion.eggs: enable egg conversion; default true.
+[*]conversion.return-old-egg: return the previous mob egg when possible; default true.
+[*]upgrades.money / upgrades.levels: permit each upgrade payment method; both default true.
+[/LIST]
+[B]boosts[/B]
+[LIST]
+[*]max-amount: maximum purchased/granted bonus; default 5.
+[*]currency: an item material, XP or MONEY; default DIAMOND.
+[*]cost-per-minute: price for each minute and bonus unit; default 2.
+[/LIST]
+Boost price is rounded upward after multiplying rate, minutes and bonus. A default +2 boost for 15 minutes costs 60 diamonds. The block bonus and owner bonus add together; boosts add output, they do not multiply all production. Reapplying a boost replaces that boost rather than extending its previous duration.
+
+[B]rewards[/B]
+[LIST]
+[*]enabled: enable mob kill rewards; default true.
+[*]count-unnatural: include generated and other non-natural mobs; default false.
+[*]kill-goal: guaranteed milestone interval; default 100.
+[*]drop-chance: random reward percentage per eligible kill; default 2.5.
+[*]alert-interval: progress message interval; default 10 kills.
+[/LIST]
+[B]economy, protections and storage[/B]
+[LIST]
+[*]economy.provider: Vault, PlayerPoints or none; default Vault. PlayerPoints rounds each transaction upward to whole points.
+[*]protection.hooks: use installed WorldGuard/GriefPrevention checks; default true.
+[*]protection.owner-only: restrict owned spawners to their owner, except bypass users; default false.
+[*]protection.repel-liquids-radius: stop liquid flow close to managed spawners; default 1, 0 disables it.
+[*]creative.charge: charge creative players for actions; default false.
+[*]storage.autosave-seconds: state snapshot interval; default 15.
+[*]blacklist.worlds / blacklist.types: disabled world names and type IDs; empty lists by default.
+[/LIST]
+[/SPOILER]
+
+[SIZE=5][B]6. Spawner definitions and tiers[/B][/SIZE]
+spawners.yml uses schema-version: 1. With generate-mob-spawners: true, missing definitions are generated from the mobs available on the running server. Existing definitions are preserved.
+
+defaults.type supplies shared type properties. defaults.tier supplies shared tier properties. Maps merge recursively; lists replace inherited lists. Tier order follows YAML insertion order, so the first entry is the initial tier and the next entry is the next upgrade.
+
+[SPOILER=Type properties]
+[CODE]name: Zombie
+icon: ZOMBIE_SPAWN_EGG
+enabled: true
+shop: true
+shop-order: 0
+price: 1000.0
+convertible: true
+conversion-cost: 4.5
+egg-cost: 1
+kill-goal: 0
+kill-chance: 0.0
+craftable: false
+recipe: []
+ingredients: {}
+tiers:
+  '1':
+    name: Tier 1
+    outputs:
+      - kind: ENTITY
+        value: ZOMBIE
+        chance: 100
+        amount: 1[/CODE]
+price is the shop price per item. conversion-cost is charged per converted unit, and egg-cost is multiplied by the component's count. A type's kill-goal or kill-chance value of 0 uses the corresponding global reward setting.
+The shop sells the first tier. Give other tiers with the administrative give command or unlock them through tier upgrades.
+[/SPOILER]
+
+[SPOILER=Tier properties and conditions]
+[CODE]'1':
+  name: Tier 1
+  min-delay: 200
+  max-delay: 800
+  min-spawn: 1
+  max-spawn: 4
+  spawn-range: 4.0
+  upgrade-money: 10.0
+  upgrade-levels: 2
+  pickup-cost: 0.0
+  spawn-limit: 0
+  ai: true
+  baby: false
+  on-fire: false
+  entity-name: ''
+  particle: ''
+  conditions:
+    biomes: []
+    min-y: -64
+    max-y: 320
+    min-light: 0
+    max-light: 15
+    nearby-players: 1
+    player-range: 16.0
+    max-entities: 6
+    entity-range: 8.0
+    storm: false
+    spawn-on: []
+  outputs:
+    - kind: ENTITY
+      value: ZOMBIE
+      chance: 100
+      amount: 1
+  drops: [][/CODE]
+Delays are inclusive random server ticks. At 20 TPS, 200 ticks is about 10 seconds. The displayed defaults can be overridden by generated mob definitions; hostile mobs normally require light 0-7, and slime definitions have additional biome/height conditions.
+
+Stack growth uses the current tier's upgrade cost. Advancing a component to the next tier uses the destination tier's cost multiplied by its stack count. pickup-cost is the collection money cost per unit.
+
+A positive spawn-limit limits successful cycles; 0 is unlimited. The saved cycle counter belongs to the placed block. Exhausted mixed components are skipped while other eligible components can continue.
+
+Set nearby-players to 0 to remove the nearby-player requirement. This does not force-load chunks. Biome names and material names must exist on the server. spawn-on checks the material below candidate output locations. Entity caps count nearby non-player living entities and include boosted output. Mixed components check their own conditions independently.
+
+particle accepts a supported data-free particle name, or an empty string to disable the tier effect. All output and condition settings are validated before activation.
+[/SPOILER]
+
+[SIZE=5][B]7. Generator outputs[/B][/SIZE]
+A tier can include several output modes at the same time. Every output has a kind, value, chance and amount.
+[CODE]outputs:
+  - kind: ENTITY
+    value: ZOMBIE
+    chance: 100
+    amount: 1
+  - kind: ITEM
+    value: IRON_INGOT
+    chance: 25
+    amount: 2
+  - kind: BLOCK
+    value: STONE
+    chance: 50
+    amount: 1
+  - kind: COMMAND
+    value: 'give {player} diamond {amount}'
+    chance: 5
+    amount: 1[/CODE]
+[LIST]
+[*][B]ENTITY:[/B] value is a living spawnable entity type. Amount controls emitted copies, subject to nearby caps and the work budget.
+[*][B]ITEM:[/B] value is an item material. Large quantities are split into legal item stacks.
+[*][B]BLOCK:[/B] value is a block material. Generated blocks replace air and respect the block-formation event.
+[*][B]COMMAND:[/B] value is a console command without a leading slash. It dispatches once per successful roll; amount is supplied through the amount placeholder.
+[/LIST]
+Command placeholders:
+[CODE]{player} {world} {x} {y} {z} {type} {tier} {amount}[/CODE]
+The player placeholder requires the owner to be online. Other coordinate/type placeholders refer to the spawner. Commands are administrator-configured console actions.
+
+[B]Amount expressions[/B]
+spawning.amount-expression defaults to {RAND}. Supported operators are +, -, *, /, %, ^ and parentheses. Variables are {RAND} and {STACK_SIZE}. Each component evaluates once per cycle; the nonnegative result is floored and multiplied by its stack, then active bonuses are added. Output amounts and work budgets remain final limits. There is no script engine.
+[CODE]/csp settings set spawning.amount-expression '{RAND} + 1'[/CODE]
+When using the command editor, enter the YAML string value including quotes as shown. Arithmetic errors skip that component's output and produce a throttled console warning. The manual spawn command has a 1024-attempt limit; automatic attempts share the configured scheduler budget. Oversized output is truncated, not queued as a backlog.
+
+[SIZE=5][B]8. Example item generator[/B][/SIZE]
+The bundled iron_generator example is disabled by default. Enable it and give a tagged item:
+[CODE]/csp editor set spawners.iron_generator.enabled true
+/csp give YourName iron_generator 1 1 1[/CODE]
+To define another generator, add an entry under spawners in spawners.yml. It inherits the shared defaults:
+[CODE]  emerald_generator:
+    name: Emerald Generator
+    icon: EMERALD
+    enabled: true
+    convertible: false
+    price: 5000
+    tiers:
+      '1':
+        min-spawn: 1
+        max-spawn: 1
+        conditions:
+          nearby-players: 1
+          min-light: 0
+          max-light: 15
+        outputs:
+          - kind: ITEM
+            value: EMERALD
+            chance: 100
+            amount: 1[/CODE]
+Reload, then use /csp give YourName emerald_generator 1 1 1. The example assumes the existing defaults and root schema remain present.
+
+[SIZE=5][B]9. Custom mob loot[/B][/SIZE]
+Place drops inside a tier. A nonempty drops list replaces normal loot and experience for mobs tagged as generated by that tier. It respects the world's mob-loot gamerule.
+[CODE]drops:
+  - material: IRON_INGOT
+    min: 1
+    max: 3
+    chance: 50
+    name: '&fSpawner Iron'
+    lore:
+      - '&7Produced by a custom mob.'
+    experience: 5
+  - command: 'give {player} emerald 1'
+    chance: 5
+    experience: 0[/CODE]
+Available fields are material, min, max, chance, name, lore, command and experience. A drop must contain an item, command or experience reward. Looting adds to item quantities with a bounded bonus. Command rewards require a player killer and support player, world and coordinate placeholders.
+
+[SIZE=5][B]10. Crafting[/B][/SIZE]
+Enable craftable on a type and configure a three-row shape with ingredient mappings:
+[CODE]craftable: true
+recipe:
+  - 'III'
+  - 'IEI'
+  - 'III'
+ingredients:
+  I: IRON_BARS
+  E: ZOMBIE_SPAWN_EGG[/CODE]
+The result is a tagged first-tier spawner item. Players need crafting permission and any applicable per-type permission. Automatic Crafter production is blocked because it has no player permission context.
+
+[SIZE=5][B]11. Editors and messages[/B][/SIZE]
+Use /csp editor to browse definitions, tiers and conditions. Select a field to enter a new YAML value in chat within two minutes, or type cancel. Lists and maps use YAML syntax. A null value resets an inherited field where the configuration permits it.
+
+/csp settings edits global options. Changes are validated before saving. Reloading or editing closes stale menus and clears pending prompts. Administrative set commands also work from the console.
+
+messages.yml controls chat messages and supports ampersand color codes. Keep placeholders such as amount, type, tier and reason intact. Default messages and GUI text are English.
+
+[SIZE=5][B]12. Storage, integrations and troubleshooting[/B][/SIZE]
+state.yml stores world positions, ownership, mixed stacks, successful cycles, boosts and kill counts. state.yml.bak contains the previous snapshot. Stop the server before restoring a backup. Unknown or malformed saved state is preserved rather than silently replaced.
+
+WorldGuard and GriefPrevention checks apply when their plugins are installed and protection.hooks is enabled. An installed supported hook with an incompatible API denies access and logs a warning. Operators may have protection bypass permissions. Other protection systems can integrate through the cancellable SpawnerActionEvent API.
+
+[SPOILER=Common questions]
+[B]My spawner is not producing anything.[/B]
+Check the hologram's pause reason, nearby players, biome, Y range, light, storm, redstone, entity cap, spawn ground, world/type blacklist and spawn limit. The chunk must already be loaded. A new cycle waits for its configured random delay.
+
+[B]The shop or money upgrades fail.[/B]
+Install Vault with an actual economy provider, or select PlayerPoints. Confirm the player has enough currency. Setting provider to none disables paid money operations. Check the console for incompatible provider warnings.
+
+[B]I am not being charged.[/B]
+Check customspawners.bypass.cost, operator inheritance and creative.charge.
+
+[B]I cannot pick up a spawner.[/B]
+Check break/silk permissions, pickaxe type and Silk Touch level, protection ownership, pickup costs, only-placed and collection probabilities.
+
+[B]A reload fails.[/B]
+Read the validation error. Check indentation, exact field names, material/entity names, numeric bounds and required output entries. The previous active configuration remains in use for rejected edits.
+
+[B]Can I import another plugin's data automatically?[/B]
+No automatic legacy item/database migration is provided. CustomSpawners uses its own item metadata, configuration and state format.
+
+[B]Where do I report a problem?[/B]
+Use the GitHub issue tracker with exact Paper, Java and plugin versions, the full console error and relevant configuration. Avoid including credentials from other plugins.
+[/SPOILER]
+
+[CENTER][URL=https://github.com/lino9999/CustomSpawners/releases/latest][B]Download CustomSpawners[/B][/URL]
+[B]Created by Lino | MIT License[/B][/CENTER]

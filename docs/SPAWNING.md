@@ -42,4 +42,4 @@ Generated entities receive string PDC keys `customspawners:spawned-type` and `cu
 
 Holograms use native `TextDisplay` entities with `customspawners:spawner-display` metadata. They are nonpersistent and are removed on deactivation, world unload and plugin stop. Chunk discovery removes stale tagged displays before creating replacements. No external hologram plugin is required. Displays show the first stack's configured type and tier, the total stack count and an English pause reason when available. Optional data-free tier particles play after successful cycles. Particles and holograms can be disabled independently.
 
-Runtime compatibility and behavior claims require the server checks documented in `TESTING.md`; source compilation alone does not establish them.
+Runtime compatibility and behavior claims require server verification; source compilation alone does not establish them. See `COMPATIBILITY.md` for the verification completed before the maintainer-requested cleanup.

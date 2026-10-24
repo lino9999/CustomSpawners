@@ -6,7 +6,7 @@ build/
 .gradle/
 .idea/
 runtime/
-docs/verification/
+dist/
 *.log
 *.jar
 *.zip

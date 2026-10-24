@@ -2,9 +2,9 @@
 
 ## Start here
 
-Read this file, pom.xml, the target module, and its tests. Use rg with a path. Never scan .tools/, Plugin originale/, target/, runtime/ or .git/ by default. .ignore and .rgignore keep large evidence and generated files out of searches; .gitignore keeps them out of commits. GitHub repository: lino9999/CustomSpawners.
+Read this file, pom.xml and the target module. Use rg with a path. Never scan .tools/, Plugin originale/, target/, dist/, runtime/ or .git/ by default. .ignore and .rgignore keep large evidence and generated files out of searches; .gitignore keeps them out of commits. GitHub repository: lino9999/CustomSpawners.
 
-Read docs/TESTING.md for verification status. Detailed docs/verification/ results are deliberately excluded from default searches; select an exact report only when needed.
+Read docs/COMPATIBILITY.md for the previously completed verification. Test sources, fixtures, raw reports and temporary servers were explicitly removed by the maintainer after verification. Do not recreate them unless requested.
 
 ## Rules
 
@@ -27,8 +27,10 @@ All Bukkit world, inventory and domain mutations run on the main server thread. 
 
 ## Build and checks
 
-Use ./mvnw verify or mvnw.cmd verify with JDK 21+. The local development JDK and evidence may be in .tools/ (ignored). Relevant model tests cover stack invariants; service tests cover transaction/reload/persistence regressions. Run the compatibility workflow and isolated server smoke checks before widening support claims. Follow docs/TESTING.md for reproducible runtime checks.
+Use ./mvnw verify or mvnw.cmd verify with JDK 21+. The local development JDK and evidence may be in .tools/ (ignored). CI verifies compilation and packaging against four API versions. The current repository has no automated test sources or fixtures. Widen compatibility claims only after appropriate verification and preserve the maintainer's cleanup preference.
 
 ## Evidence and scope
 
 docs/RECONSTRUCTION.md records static behavior findings and deliberate fixes. It is a behavior specification, not implementation source. Raw REA/CFR output remains local and ignored. Update README command/permission/config tables with user-facing changes. Update this module map if adding a subsystem. Keep legacy plugin names out of runtime metadata and commands.
+
+SpigotMC prose lives in docs/spigotmc/*.bbcode.txt. Icon masters and exports live in assets/spigotmc/. Keep release attachments and installation links aligned with the project version. Release artifacts belong in dist/ locally and GitHub Releases, not the Git source tree.

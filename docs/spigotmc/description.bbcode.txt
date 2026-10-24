@@ -1,0 +1,79 @@
+[CENTER][IMG]https://raw.githubusercontent.com/lino9999/CustomSpawners/main/assets/spigotmc/icon-128.png[/IMG]
+[SIZE=7][B][COLOR=#E8A541]CustomSpawners[/COLOR][/B][/SIZE]
+[SIZE=4]Spawner stacking, Omni farms, custom generators and progression.[/SIZE]
+[B]Made by Lino | Paper 1.21.11 - 26.3[/B]
+
+[URL=https://github.com/lino9999/CustomSpawners/releases/latest][B]Download[/B][/URL]  |  [URL=https://github.com/lino9999/CustomSpawners][B]Source code[/B][/URL]  |  [URL=https://github.com/lino9999/CustomSpawners/issues][B]Report an issue[/B][/URL][/CENTER]
+
+[SIZE=5][B][COLOR=#E8A541]Build more than a mob farm[/COLOR][/B][/SIZE]
+CustomSpawners brings spawner stacking, configurable tiers, custom loot and an in-game shop together in one Minecraft plugin. Create mixed mob farms, reward players for mob kills, or design generators that produce items, place blocks and run console commands.
+
+Built for survival, Skyblock, factions and economy servers, with English messages, native holograms and in-game configuration menus.
+
+[SIZE=5][B][COLOR=#E8A541]Features[/COLOR][/B][/SIZE]
+[LIST]
+[*][B]Spawner stacking:[/B] combine matching spawners and keep their quantities in one block.
+[*][B]Omni spawners:[/B] combine multiple types and tiers, then manage each component from a menu.
+[*][B]Configurable tiers:[/B] buy stack units or tier upgrades with money or experience levels.
+[*][B]Four generator modes:[/B] entities, items, blocks and console commands, including mixed outputs.
+[*][B]Spawner shop:[/B] paginated browsing, configurable prices and purchases of 1, 10 or 64 items.
+[*][B]Timed boosts:[/B] buy extra output for a spawner or grant timed/permanent owner bonuses.
+[*][B]Conversion:[/B] change spawner types using money or spawn eggs.
+[*][B]Silk Touch pickup:[/B] configure collection requirements, drop chances and whole-stack pickup.
+[*][B]Custom mob loot:[/B] quantities, chances, item names, lore, experience and command rewards.
+[*][B]Kill rewards:[/B] guaranteed milestones, random spawner rewards and player statistics.
+[*][B]Farm conditions:[/B] biome, height, light, nearby players, entity caps, storms and ground materials.
+[*][B]Server controls:[/B] redstone pause, no-AI mobs, chunk/player limits, proximity combining and blacklists.
+[*][B]Native holograms:[/B] show type, tier, stack count and pause reasons without an external hologram plugin.
+[*][B]In-game editing:[/B] nested definition/settings menus with validated YAML values.
+[*][B]Custom recipes:[/B] configurable shaped crafting recipes with player permission checks.
+[*][B]Maintained data:[/B] persistent item metadata, ordered state saves and a backup of the previous state.
+[/LIST]
+
+[SIZE=5][B][COLOR=#E8A541]Quick start[/COLOR][/B][/SIZE]
+[LIST=1]
+[*]Download the release JAR and put it in your server's plugins folder.
+[*]Start Paper, then configure the generated CustomSpawners files.
+[*]Give yourself a spawner, place it and right-click to open its menu.
+[/LIST]
+[CODE]/csp give YourName zombie 1 1 1
+/csp shop
+/csp inspect[/CODE]
+Right-click a spawner with another tagged spawner item to combine them. Use a spawn egg to convert it. Mine with Silk Touch to collect it; sneak to collect the whole mixed stack when enabled.
+
+[SIZE=5][B][COLOR=#E8A541]Requirements and integrations[/COLOR][/B][/SIZE]
+[LIST]
+[*][B]Paper required.[/B] Target range: Minecraft 1.21.11 through 26.3. This listing does not claim support for the Spigot server implementation.
+[*][B]Java 21+[/B] for Paper 1.21.11; [B]Java 25+[/B] for Paper 26.x.
+[*][B]Optional economy:[/B] Vault with an economy provider, or PlayerPoints.
+[*][B]Optional protections:[/B] WorldGuard and GriefPrevention.
+[*][B]No external hologram plugin required.[/B]
+[*]Folia is outside the supported target.
+[/LIST]
+
+[SIZE=5][B][COLOR=#E8A541]Configure it your way[/COLOR][/B][/SIZE]
+Use config.yml for global behavior, spawners.yml for types/tiers/generators and messages.yml for English chat messages. Example item, block and command generators are included and disabled by default. Use /csp editor and /csp settings for in-game administration.
+
+[SPOILER=Useful commands]
+[CODE]/csp help
+/csp shop
+/csp stats
+/csp inspect
+/csp upgrade money stack
+/csp upgrade xp tier
+/csp boost 2 15
+/csp editor
+/csp settings
+/csp reload[/CODE]
+Main command: /customspawners. Aliases: /csp and /cspawners.
+Shop shortcut: /cspshop. Statistics shortcut: /cspstats.
+Administrative permissions are grouped under customspawners.admin.
+[/SPOILER]
+
+[SIZE=5][B][COLOR=#E8A541]Support[/COLOR][/B][/SIZE]
+For bug reports, include your Paper version, Java version, CustomSpawners version, relevant configuration and the full error from the console.
+
+[URL=https://github.com/lino9999/CustomSpawners/releases/latest]Download CustomSpawners[/URL] | [URL=https://github.com/lino9999/CustomSpawners/issues]Open an issue[/URL]
+
+[CENTER][B]CustomSpawners by Lino[/B]
+Open source under the MIT license.[/CENTER]
